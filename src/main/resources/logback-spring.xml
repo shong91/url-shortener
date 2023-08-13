@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <charset>UTF-8</charset>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5.5p [%-0.100t][%X{request_id:-startup}]
+        \(%class{0}.%method:%L\) - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/Users/shong/Desktop/dev/github/log/shortenUrl.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/Users/shong/Desktop/dev/github/log/shortenUrl.%d{yyyy-MM-dd}.log
+      </fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <charset>UTF-8</charset>
+      <layout class="ch.qos.logback.classic.PatternLayout">
+        <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5.5p [%-0.100t][%X{request_id:-startup}]
+          \(%class{0}.%method:%L\) - %msg%n
+        </pattern>
+      </layout>
+    </encoder>
+  </appender>
+
+  <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+
+  <springProfile name="local,dev">
+    <property name="LOG_LEVEL" value="DEBUG"/>
+    <property name="JDBC_LOG_LEVEL" value="DEBUG"/>
+  </springProfile>
+  <springProfile name="prod">
+    <property name="LOG_LEVEL" value="DEBUG"/>
+    <property name="JDBC_LOG_LEVEL" value="ERROR"/>
+  </springProfile>
+
+
+  <!-- Query Loggers -->
+  <logger name="org.hibernate.sql" level="DEBUG"/>
+
+  <!-- Application Loggers -->
+  <logger name="com.shong91.app" level="DEBUG,"/>
+
+  <root level="info">
+    <springProfile name="local,dev">
+      <appender-ref ref="console"/>
+      <appender-ref ref="FILE"/>
+    </springProfile>
+  </root>
+
+</configuration>
